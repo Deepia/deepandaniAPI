@@ -61,6 +61,148 @@ namespace deepandaniAPI.Controllers
             }
         }
 
+        
+        [System.Web.Http.HttpGet]
+        public Result deleteCategory(int id)
+        {
+            Result obj = new Result();
+            try
+            {
+                var re = Request;
+                var headers = re.Headers;
+                bool status = false;
+                string token = "";
+                if (headers.Contains("Authorization"))
+                {
+                    token = headers.GetValues("Authorization").First();
+                    status = checkToken(token);
+                }
+                if (status)
+                {
+                    Dictionary<string, SqlParameter> cmdParameters = new Dictionary<string, SqlParameter>();
+                    cmdParameters["state"] = new SqlParameter("state", "delete");
+                    cmdParameters["id"] = new SqlParameter("id", id);
+                    DBUtility utl = new DBUtility();
+                    int result = utl.ExecuteCommand("USPCategory", cmdParameters);
+                    if (result == 1)
+                    {
+                        obj.status = "deleted";
+                    }
+                    else
+                    {
+                        obj.status = "error";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            return obj;
+        }
+
+        
+        [System.Web.Http.HttpGet]
+        public Category getCategoryByID(int id)
+        {
+            try
+            {
+
+                Category obj = new Category();
+                var re = Request;
+                var headers = re.Headers;
+                bool status = false;
+                string token = "";
+                if (headers.Contains("Authorization"))
+                {
+                    token = headers.GetValues("Authorization").First();
+                    status = checkToken(token);
+                }
+                if (status)
+                {
+
+                    Dictionary<string, SqlParameter> cmdParameters = new Dictionary<string, SqlParameter>();
+                    cmdParameters["state"] = new SqlParameter("state", "edit");
+                    cmdParameters["id"] = new SqlParameter("id", id);
+                    DBUtility utl = new DBUtility();
+                    DataTable dt = utl.getDataTabe("USPCategory", cmdParameters);
+                    if (dt.Rows.Count > 0)
+                    {
+
+                        obj.id = Convert.ToInt32(dt.Rows[0]["id"]);
+                        obj.category_name = Convert.ToString(dt.Rows[0]["category_name"]);
+                        obj.created_at = Convert.ToDateTime(dt.Rows[0]["created_at"]);
+                        obj.is_active = Convert.ToBoolean(dt.Rows[0]["is_active"]);
+                    }
+                }
+
+                return obj;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        
+
+        [System.Web.Http.HttpPost]
+        public Result createUpdateCategory()
+        {
+            Result obj = new Result();
+            try
+            {
+                var re = Request;
+                var headers = re.Headers;
+                bool status = false;
+                string token = "";
+                if (headers.Contains("Authorization"))
+                {
+                    token = headers.GetValues("Authorization").First();
+                    status = checkToken(token);
+                }
+                if (status)
+                {
+                    var httpRequest = HttpContext.Current.Request;
+                    string postid = httpRequest["id"];
+
+                    Dictionary<string, SqlParameter> cmdParameters = new Dictionary<string, SqlParameter>();
+                    cmdParameters["category_name"] = new SqlParameter("category_name", httpRequest["category_name"]);
+                    cmdParameters["is_active"] = new SqlParameter("is_active", httpRequest["is_active"]);
+                    if (postid != null)
+                    {
+                        cmdParameters["state"] = new SqlParameter("state", "update");
+                        cmdParameters["id"] = new SqlParameter("id", postid);
+                    }
+                    else
+                    {
+                        cmdParameters["state"] = new SqlParameter("state", "insert");
+                    }
+                    DBUtility utl = new DBUtility();
+                    int result = utl.ExecuteCommand("USPCategory", cmdParameters);
+                    if (result == 1)
+                    {
+                        obj.status = "Created or Updated";
+                    }
+                    else
+                    {
+                        obj.status = "error";
+                    }
+                }
+                else
+                {
+                    obj.status = "error";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            return obj;
+        }
+
         public bool checkToken(string token)
         {
             try
