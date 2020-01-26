@@ -132,7 +132,7 @@ namespace deepandaniAPI.Controllers
                         obj.id = Convert.ToInt32(dt.Rows[0]["id"]);
                         obj.category_name = Convert.ToString(dt.Rows[0]["category_name"]);
                         obj.created_at = Convert.ToDateTime(dt.Rows[0]["created_at"]);
-                        obj.is_active = Convert.ToBoolean(dt.Rows[0]["is_active"]);
+                        obj.is_active = Convert.ToBoolean(dt.Rows[0]["is_active"]);//mmmmmmmmmm
                     }
                 }
 

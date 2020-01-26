@@ -8,17 +8,22 @@ namespace deepandaniAPI.Models
     public class Blog
     {
         public int id { get; set; }
+        public int? category_id { get; set; }
+        public int? is_active { get; set; }
+        public int? is_featured { get; set; }
         public string title { get; set; }
         public string short_desc { get; set; }
         public string author { get; set; }
         public string image { get; set; }
         public DateTime created_at { get; set; }
         public string description { get; set; }
+        public string category_name { get; set; }
     }
 
     public class BlogForAdmin
     {
         public int id { get; set; }
+        public int category_id { get; set; }
         public string title { get; set; }
         public string short_desc { get; set; }
         public int user_id { get; set; }

@@ -51,7 +51,7 @@ namespace deepandaniAPI.Controllers
         }
 
         [System.Web.Http.HttpGet]
-        public List<Blog> listadminblogs()
+        public List<Blog> listadminblogs(int? id=null)
         {
             try
             {
@@ -72,6 +72,10 @@ namespace deepandaniAPI.Controllers
 
                     Dictionary<string, SqlParameter> cmdParameters = new Dictionary<string, SqlParameter>();
                     cmdParameters["state"] = new SqlParameter("state", "adminlist");
+                    if(id!=null)
+                    {
+                        cmdParameters["category_id"] = new SqlParameter("category_id", id);
+                    }
                     cmdParameters["token"] = new SqlParameter("token", token);
                     DBUtility utl = new DBUtility();
                     DataTable dt = utl.getDataTabe("USPblogs", cmdParameters);
@@ -79,10 +83,14 @@ namespace deepandaniAPI.Controllers
                     {
                         Blog obj = new Blog();
                         obj.id = Convert.ToInt32(dt.Rows[i]["id"]);
+                        obj.category_id = Convert.ToInt32(dt.Rows[i]["category_id"]);
+                        obj.is_active = Convert.ToInt32(dt.Rows[i]["is_active"]);
+                        obj.is_featured = Convert.ToInt32(dt.Rows[i]["is_featured"]);
                         obj.title = Convert.ToString(dt.Rows[i]["title"]);
                         obj.author = Convert.ToString(dt.Rows[i]["author"]);
                         obj.short_desc = Convert.ToString(dt.Rows[i]["short_desc"]);
                         obj.image = Convert.ToString(dt.Rows[i]["imageName"]);
+                        obj.category_name= Convert.ToString(dt.Rows[i]["category_name"]);
                         obj.created_at = Convert.ToDateTime(dt.Rows[i]["created_at"]);
                         objlist.Add(obj);
                     }
@@ -138,6 +146,7 @@ namespace deepandaniAPI.Controllers
 
                     Dictionary<string, SqlParameter> cmdParameters = new Dictionary<string, SqlParameter>();
                     cmdParameters["title"] = new SqlParameter("title", httpRequest["title"]);
+                    cmdParameters["category_id"] = new SqlParameter("category_id", httpRequest["category_id"]);
                     cmdParameters["descriptions"] = new SqlParameter("descriptions", httpRequest["description"]);
                     cmdParameters["imageName"] = new SqlParameter("imageName", imageName);
                     cmdParameters["is_featured"] = new SqlParameter("is_featured", httpRequest["is_featured"]);
@@ -503,6 +512,7 @@ namespace deepandaniAPI.Controllers
                     if (dt.Rows.Count > 0)
                     {
                         obj.id = Convert.ToInt32(dt.Rows[0]["id"]);
+                        obj.category_id= Convert.ToInt32(dt.Rows[0]["category_id"]);
                         obj.title = Convert.ToString(dt.Rows[0]["title"]);
                         obj.is_active = Convert.ToBoolean(dt.Rows[0]["is_active"]);
                         obj.is_featured = Convert.ToBoolean(dt.Rows[0]["is_featured"]);
